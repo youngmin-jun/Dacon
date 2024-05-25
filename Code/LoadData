@@ -1,0 +1,26 @@
+import pandas as pd
+import duckdb
+
+
+trainPath = "./Data/train.csv"
+testPath = "./Data/test.csv"
+
+class LoadData():
+    def loadTrain():
+        con = duckdb.connect()
+        trainData = con.query(f"""(SELECT *
+                        FROM read_csv_auto('{trainPath}')
+                        WHERE Click = 0
+                        ORDER BY random()
+                        LIMIT 30000)
+                        UNION ALL
+                        (SELECT *
+                        FROM read_csv_auto('{trainPath}')
+                        WHERE Click = 1
+                        ORDER BY random()
+                        LIMIT 30000)""").df()
+        return trainData
+    
+    def loadTest():
+        testData = pd.read_csv(testPath)
+        return testData
